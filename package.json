@@ -4,12 +4,25 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "tsx --test src/lib/__tests__/*.test.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@tiptap/extension-placeholder": "^3.33.0",
+    "@tiptap/extension-underline": "^3.33.0",
+    "@tiptap/pm": "^3.33.0",
+    "@tiptap/react": "^3.33.0",
+    "@tiptap/starter-kit": "^3.33.0",
+    "lucide-react": "^1.70.0",
+    "mammoth": "^1.13.0",
     "next": "16.4.5",
+    "prisma": "^5.22.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
@@ -21,6 +34,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vite": "^8.3.7",
+    "vitest": "^5.1.0"
   }
 }

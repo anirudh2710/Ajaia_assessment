@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ajaia Docs — Lightweight Collaborative Document Editor
 
-## Getting Started
+> An AI-native full stack collaborative document editor inspired by Google Docs, engineered for Ajaia's productivity assessment within a strict timebox.
 
-First, run the development server:
+---
+
+## 🚀 Live Demo & Quick Test
+- **Local Dev**: Run in 1 command (`npm run dev`) with zero external database configuration.
+- **Test Accounts**: Instant one-click user switcher in the top navigation bar. No login friction.
+
+---
+
+## 🌟 Key Features
+
+### 1. Document Creation & Rich-Text Editing
+- **Modern WYSIWYG Editor**: Built on top of **Tiptap (ProseMirror)** for bulletproof document state and clean HTML/JSON serialization.
+- **Rich-Text Formatting**:
+  - Headings: H1, H2, H3, and normal paragraphs
+  - Inline Styling: Bold, Italic, Underline
+  - Lists: Bulleted lists (`<ul>`), Numbered lists (`<ol>`)
+  - Blocks: Blockquotes and styled Code blocks
+  - History: Undo and Redo with keyboard shortcuts (`Cmd+Z`, `Cmd+Y`)
+- **Document Management**:
+  - Inline title editing with instant rename
+  - Debounced auto-save with real-time cloud sync status ("Saving...", "Saved to cloud")
+  - Word counter and character counter
+  - Export document to **Markdown (`.md`)**, **HTML (`.html`)**, or **Print / Save as PDF**
+
+### 2. Multi-Format File Upload & Import
+- **Direct Document Import**: Upload `.md`, `.txt`, and `.docx` (Word) files via drag-and-drop or file picker from the dashboard.
+- **Format Preservation**: Markdown headers, bolding, italics, and lists are automatically converted into live, editable rich text in the document canvas.
+- **Document Attachments**: Attach reference files, specifications, or images directly to any document via an integrated file drawer.
+
+### 3. Role-Based Sharing & Collaboration
+- **Role Hierarchy**:
+  - **Owner**: Full rights (view, edit, rename, invite/remove collaborators, change roles, delete).
+  - **Editor**: Can view, edit content, and rename.
+  - **Viewer**: Read-only access. The editor locks into view-only mode, disabling editing tools and displaying a clear status banner.
+- **Dashboard Separation**: Clear separation between **"My Documents"** and **"Shared with Me"** with role badges and owner avatars.
+- **Server-Side Enforcement**: Strict HTTP 403 authorization checks on all mutating API endpoints (`PATCH`, `DELETE`, `/share`).
+
+### 4. Zero-Friction Multi-Persona Testing
+- **Top-Bar User Switcher**: Switch instantly between pre-seeded team personas:
+  - **Alex Johnson** (Engineering Lead) — Owner of engineering roadmap; editor on product specs.
+  - **Sarah Chen** (Product Manager) — Owner of product spec; collaborator on engineering roadmap.
+  - **Marcus Vance** (Product Designer) — Owner of design guidelines; viewer on engineering roadmap.
+  - **Maya Patel** (Security & Compliance) — Uninvited user by default for testing zero-access state.
+
+---
+
+## 🛠️ Tech Stack & Decisions
+
+| Layer | Technology | Rationale |
+| :--- | :--- | :--- |
+| **Framework** | Next.js 16 (App Router, React 19, TypeScript) | Unified full-stack repository; server-side API routes; optimized streaming. |
+| **Rich Text Editor** | Tiptap 3 (ProseMirror Engine) | Rock-solid rich-text state without the cross-browser bugs of raw `contentEditable`. |
+| **Styling** | Tailwind CSS v4 | High-velocity, accessible Google Docs-inspired aesthetic. |
+| **Persistence** | Prisma ORM + SQLite (`file:./dev.db`) | Zero-config local execution for reviewers (no Docker or cloud DB account required). |
+| **File Parsing** | Custom Markdown Lexer + Mammoth (.docx) | Client & server buffer parsing for multi-format imports. |
+| **Testing** | Node.js Test Runner + TSX | Fast, zero-dependency automated test runner (permissions and file parsers). |
+
+---
+
+## ⚡ Quick Start (Local Setup)
+
+### Prerequisites
+- Node.js v20+ or v22+
+- npm v10+
+
+### Installation & Run
 
 ```bash
+# 1. Clone repository & install dependencies
+git clone <repository-url>
+cd Ajaia_assessment
+npm install
+
+# 2. Push database schema & seed initial accounts & documents
+npx prisma db push
+npx prisma db seed
+
+# 3. Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧪 Automated Testing
 
-## Learn More
+Run the automated test suite covering access-control rules and file parser transformations:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm test
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Test Coverage Highlights:
+- **Permissions Suite**: Verifies Owner, Editor, Viewer, and Stranger role boundaries, write-protection, and revocation.
+- **File Parser Suite**: Verifies conversion of Markdown headings, bold/italic, bullet/ordered lists, plain text line breaks, and file buffers.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📁 Repository Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+Ajaia_assessment/
+├── prisma/
+│   ├── schema.prisma        # Prisma relational schema (User, Document, DocumentShare, Attachment)
+│   ├── seed.ts              # Database seeder with 4 team personas & sample docs
+│   └── dev.db               # SQLite database file
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── users/       # GET seeded team accounts
+│   │   │   ├── documents/   # GET, POST documents
+│   │   │   │   ├── [id]/    # GET, PATCH, DELETE document
+│   │   │   │   │   ├── share/       # POST/DELETE collaborator permissions
+│   │   │   │   │   └── attachments/ # POST file attachments
+│   │   │   │   └── import/  # POST file upload (.md, .txt, .docx)
+│   │   ├── doc/[id]/page.tsx# Rich text document editor page
+│   │   ├── layout.tsx       # Root layout with UserProvider
+│   │   └── page.tsx         # Dashboard with My Docs / Shared with Me
+│   ├── components/
+│   │   ├── Editor.tsx       # Tiptap editor with toolbar & export handlers
+│   │   ├── ShareModal.tsx   # Google Docs-style collaboration modal
+│   │   ├── UserSwitcher.tsx # One-click multi-persona switcher dropdown
+│   │   ├── FileImportModal.tsx # Drag & drop file importer
+│   │   └── AttachmentDrawer.tsx# Document attachments management drawer
+│   ├── context/
+│   │   └── UserContext.tsx  # Global mock auth session state
+│   └── lib/
+│       ├── auth.ts          # Session user extraction & fallback
+│       ├── permissions.ts   # Core role calculation & capability checks
+│       ├── fileParser.ts    # Markdown, plain text, and docx converter
+│       └── __tests__/       # Automated unit & integration tests
+├── sample-files/            # Sample .md and .txt files for testing file import
+├── ARCHITECTURE.md          # Architecture decisions, tradeoffs, and data model
+├── AI_WORKFLOW.md           # AI tools, velocity impact, rejected outputs, verification
+└── SUBMISSION.md            # Complete review manifest & checklist
+```
