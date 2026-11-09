@@ -66,17 +66,17 @@ export function AttachmentDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="relative w-full max-w-lg bg-[#181a20] rounded-2xl shadow-2xl border border-white/10 overflow-hidden text-gray-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
           <div className="flex items-center gap-2">
-            <Paperclip className="w-4 h-4 text-indigo-600" />
-            <h3 className="text-base font-semibold text-gray-900">Document Attachments</h3>
+            <Paperclip className="w-4 h-4 text-indigo-400" />
+            <h3 className="text-base font-semibold text-white">Document Attachments</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -96,16 +96,16 @@ export function AttachmentDrawer({
               <button
                 disabled={isUploading}
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-gray-200 hover:border-indigo-400 rounded-xl text-xs font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-white/15 hover:border-indigo-500/50 rounded-xl text-xs font-medium text-gray-300 hover:text-white hover:bg-white/[0.02] transition-all"
               >
                 {isUploading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
+                    <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
                     Uploading attachment...
                   </>
                 ) : (
                   <>
-                    <Upload className="w-4 h-4" />
+                    <Upload className="w-4 h-4 text-indigo-400" />
                     Upload an attachment to this document
                   </>
                 )}
@@ -114,37 +114,37 @@ export function AttachmentDrawer({
           )}
 
           {error && (
-            <div className="p-2.5 bg-red-50 text-red-700 text-xs rounded-lg border border-red-100">
+            <div className="p-2.5 bg-red-500/10 text-red-300 text-xs rounded-lg border border-red-500/20">
               {error}
             </div>
           )}
 
           {/* Attachments List */}
           <div className="space-y-2">
-            <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+            <h4 className="text-xs font-semibold text-gray-300 uppercase tracking-wider">
               Attached Files ({attachments.length})
             </h4>
 
             {attachments.length === 0 ? (
-              <p className="text-xs text-gray-400 text-center py-6">
+              <p className="text-xs text-gray-500 text-center py-6">
                 No files attached yet.
               </p>
             ) : (
-              <div className="divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden">
+              <div className="divide-y divide-white/5 border border-white/10 rounded-xl overflow-hidden bg-[#13151a]/40">
                 {attachments.map((att) => (
                   <div
                     key={att.id}
-                    className="flex items-center justify-between p-3 bg-white hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-3 hover:bg-white/[0.02] transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                      <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-lg border border-indigo-500/20">
                         <File className="w-4 h-4" />
                       </div>
                       <div className="truncate">
-                        <p className="text-xs font-medium text-gray-900 truncate">
+                        <p className="text-xs font-medium text-gray-200 truncate">
                           {att.fileName}
                         </p>
-                        <p className="text-[11px] text-gray-400">
+                        <p className="text-[11px] text-gray-500">
                           {(att.fileSize / 1024).toFixed(1)} KB &bull; {new Date(att.createdAt).toLocaleDateString()}
                         </p>
                       </div>
@@ -153,7 +153,7 @@ export function AttachmentDrawer({
                     <a
                       href={att.content}
                       download={att.fileName}
-                      className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      className="p-1.5 text-gray-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors"
                       title="Download file"
                     >
                       <Download className="w-4 h-4" />
@@ -166,10 +166,10 @@ export function AttachmentDrawer({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end px-6 py-3 bg-gray-50 border-t border-gray-100">
+        <div className="flex items-center justify-end px-6 py-3 bg-white/[0.02] border-t border-white/10">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg shadow-2xs transition-colors"
+            className="px-4 py-2 text-xs font-medium text-gray-300 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg transition-colors"
           >
             Close
           </button>

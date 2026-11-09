@@ -118,21 +118,21 @@ export function ShareModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="relative w-full max-w-lg bg-[#181a20] rounded-2xl shadow-2xl border border-white/10 overflow-hidden text-gray-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
           <div>
-            <h3 className="text-base font-semibold text-gray-900">
+            <h3 className="text-base font-semibold text-white">
               Share &ldquo;{documentTitle}&rdquo;
             </h3>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-gray-400 mt-0.5">
               Manage who has access and what role they hold
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -142,14 +142,14 @@ export function ShareModal({
           {/* Add collaborator section (Owner only) */}
           {isOwner ? (
             <form onSubmit={handleAddCollaborator} className="space-y-3">
-              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
                 Add Collaborator
               </label>
               <div className="flex items-center gap-2">
                 <select
                   value={selectedUserId}
                   onChange={(e) => setSelectedUserId(e.target.value)}
-                  className="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="flex-1 px-3 py-2 text-xs border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-[#13151a] text-gray-200"
                 >
                   <option value="">Select a team member...</option>
                   {availableUsers.map((u) => (
@@ -162,7 +162,7 @@ export function ShareModal({
                 <select
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value as "editor" | "viewer")}
-                  className="w-28 px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="w-28 px-3 py-2 text-xs border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-[#13151a] text-gray-200"
                 >
                   <option value="editor">Editor</option>
                   <option value="viewer">Viewer</option>
@@ -171,7 +171,7 @@ export function ShareModal({
                 <button
                   type="submit"
                   disabled={!selectedUserId || isSubmitting}
-                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-xs transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg shadow-sm transition-all"
                 >
                   {isSubmitting ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -182,65 +182,65 @@ export function ShareModal({
                 </button>
               </div>
               {availableUsers.length === 0 && (
-                <p className="text-[11px] text-gray-400 italic">
+                <p className="text-[11px] text-gray-500 italic">
                   All seeded team members already have access to this document.
                 </p>
               )}
             </form>
           ) : (
-            <div className="p-3 bg-amber-50 rounded-lg border border-amber-200/60 text-xs text-amber-800 flex items-center gap-2">
-              <Shield className="w-4 h-4 text-amber-600 flex-shrink-0" />
+            <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/20 text-xs text-amber-300 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-amber-400 flex-shrink-0" />
               <span>Only the document owner ({owner.name}) can invite or modify member permissions.</span>
             </div>
           )}
 
           {error && (
-            <div className="p-2.5 bg-red-50 text-red-700 text-xs rounded-lg border border-red-100">
+            <div className="p-2.5 bg-red-500/10 text-red-300 text-xs rounded-lg border border-red-500/20">
               {error}
             </div>
           )}
 
           {/* People with access */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+            <h4 className="text-xs font-semibold text-gray-300 uppercase tracking-wider">
               People with access ({shares.length + 1})
             </h4>
 
-            <div className="divide-y divide-gray-100 border border-gray-100 rounded-xl overflow-hidden bg-gray-50/50">
+            <div className="divide-y divide-white/5 border border-white/10 rounded-xl overflow-hidden bg-[#13151a]/50">
               {/* Owner Item */}
-              <div className="flex items-center justify-between p-3 bg-white">
+              <div className="flex items-center justify-between p-3 bg-[#181a20]">
                 <div className="flex items-center gap-3 min-w-0">
                   <img
                     src={owner.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${owner.name}`}
                     alt={owner.name}
-                    className="w-8 h-8 rounded-full border border-gray-200"
+                    className="w-8 h-8 rounded-full border border-white/10"
                   />
                   <div className="truncate">
-                    <p className="text-xs font-semibold text-gray-900 truncate">
+                    <p className="text-xs font-semibold text-gray-100 truncate">
                       {owner.name}
                     </p>
-                    <p className="text-[11px] text-gray-500 truncate">{owner.email}</p>
+                    <p className="text-[11px] text-gray-400 truncate">{owner.email}</p>
                   </div>
                 </div>
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                   Owner
                 </span>
               </div>
 
               {/* Collaborator Items */}
               {shares.map((share) => (
-                <div key={share.user.id} className="flex items-center justify-between p-3 bg-white">
+                <div key={share.user.id} className="flex items-center justify-between p-3 bg-[#181a20]">
                   <div className="flex items-center gap-3 min-w-0">
                     <img
                       src={share.user.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${share.user.name}`}
                       alt={share.user.name}
-                      className="w-8 h-8 rounded-full border border-gray-200"
+                      className="w-8 h-8 rounded-full border border-white/10"
                     />
                     <div className="truncate">
-                      <p className="text-xs font-semibold text-gray-900 truncate">
+                      <p className="text-xs font-semibold text-gray-100 truncate">
                         {share.user.name}
                       </p>
-                      <p className="text-[11px] text-gray-500 truncate">{share.user.email}</p>
+                      <p className="text-[11px] text-gray-400 truncate">{share.user.email}</p>
                     </div>
                   </div>
 
@@ -252,29 +252,29 @@ export function ShareModal({
                           onChange={(e) =>
                             handleRoleChange(share.user.id, e.target.value as "editor" | "viewer")
                           }
-                          className="px-2 py-1 text-xs border border-gray-200 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="px-2 py-1 text-xs border border-white/10 rounded-md bg-[#13151a] text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="editor">Editor</option>
                           <option value="viewer">Viewer</option>
                         </select>
                         <button
                           onClick={() => handleRevoke(share.user.id)}
-                          className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
+                          className="p-1 text-gray-400 hover:text-red-400 rounded transition-colors"
                           title="Revoke access"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-gray-100 text-gray-700">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white/5 border border-white/10 text-gray-300">
                         {share.role === "editor" ? (
                           <>
-                            <Edit3 className="w-3 h-3 text-indigo-500" />
+                            <Edit3 className="w-3 h-3 text-indigo-400" />
                             Editor
                           </>
                         ) : (
                           <>
-                            <Eye className="w-3 h-3 text-emerald-500" />
+                            <Eye className="w-3 h-3 text-emerald-400" />
                             Viewer
                           </>
                         )}
@@ -288,10 +288,10 @@ export function ShareModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end px-6 py-3 bg-gray-50 border-t border-gray-100">
+        <div className="flex items-center justify-end px-6 py-3 bg-white/[0.02] border-t border-white/10">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg shadow-2xs transition-colors"
+            className="px-4 py-2 text-xs font-medium text-gray-300 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg transition-colors"
           >
             Done
           </button>

@@ -58,7 +58,7 @@ export function Editor({
     editorProps: {
       attributes: {
         class:
-          "prose max-w-none focus:outline-none min-h-[550px] text-gray-800 text-[15px] leading-relaxed",
+          "prose prose-invert max-w-none focus:outline-none min-h-[600px] text-gray-200 text-[15px] leading-relaxed",
       },
     },
     immediatelyRender: false,
@@ -82,7 +82,6 @@ export function Editor({
   const handleExportMarkdown = useCallback(() => {
     if (!editor) return;
     const html = editor.getHTML();
-    // Simple HTML to markdown conversion for export
     const text = html
       .replace(/<h1>(.*?)<\/h1>/gi, "# $1\n\n")
       .replace(/<h2>(.*?)<\/h2>/gi, "## $1\n\n")
@@ -142,7 +141,7 @@ export function Editor({
   if (!editor) {
     return (
       <div className="flex items-center justify-center min-h-[500px]">
-        <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-2 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -153,9 +152,9 @@ export function Editor({
   const charCount = textContent.length;
 
   return (
-    <div className="flex flex-col flex-1 w-full bg-[#f8f9fa]">
-      {/* Google Docs Style Toolbar */}
-      <div className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-white/95 backdrop-blur-xs border-b border-gray-200 shadow-2xs">
+    <div className="flex flex-col flex-1 w-full bg-[#0f1115]">
+      {/* Sleek Dark Google Docs Style Toolbar */}
+      <div className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-[#14161d]/90 backdrop-blur-md border-b border-white/10 shadow-lg">
         {/* Formatting Buttons */}
         <div className="flex flex-wrap items-center gap-1">
           {/* Headings */}
@@ -163,8 +162,10 @@ export function Editor({
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("heading", { level: 1 }) ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("heading", { level: 1 })
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Heading 1"
           >
@@ -174,8 +175,10 @@ export function Editor({
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("heading", { level: 2 }) ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("heading", { level: 2 })
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Heading 2"
           >
@@ -185,23 +188,27 @@ export function Editor({
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("heading", { level: 3 }) ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("heading", { level: 3 })
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Heading 3"
           >
             <Heading3 className="w-4 h-4" />
           </button>
 
-          <div className="w-[1px] h-5 bg-gray-200 mx-1" />
+          <div className="w-[1px] h-4 bg-white/10 mx-1" />
 
           {/* Inline Styles */}
           <button
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("bold") ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("bold")
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Bold (Ctrl+B / Cmd+B)"
           >
@@ -211,8 +218,10 @@ export function Editor({
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("italic") ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("italic")
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Italic (Ctrl+I / Cmd+I)"
           >
@@ -222,23 +231,27 @@ export function Editor({
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("underline") ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("underline")
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Underline (Ctrl+U / Cmd+U)"
           >
             <UnderlineIcon className="w-4 h-4" />
           </button>
 
-          <div className="w-[1px] h-5 bg-gray-200 mx-1" />
+          <div className="w-[1px] h-4 bg-white/10 mx-1" />
 
           {/* Lists */}
           <button
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("bulletList") ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("bulletList")
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Bulleted List"
           >
@@ -248,23 +261,27 @@ export function Editor({
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("orderedList") ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("orderedList")
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Numbered List"
           >
             <ListOrdered className="w-4 h-4" />
           </button>
 
-          <div className="w-[1px] h-5 bg-gray-200 mx-1" />
+          <div className="w-[1px] h-4 bg-white/10 mx-1" />
 
           {/* Blockquote & Code */}
           <button
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("blockquote") ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("blockquote")
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Blockquote"
           >
@@ -274,22 +291,24 @@ export function Editor({
             type="button"
             disabled={!isEditable}
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-            className={`p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent transition-colors ${
-              editor.isActive("codeBlock") ? "bg-indigo-50 text-indigo-700 font-bold" : ""
+            className={`p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent transition-all ${
+              editor.isActive("codeBlock")
+                ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                : ""
             }`}
             title="Code Block"
           >
             <Code className="w-4 h-4" />
           </button>
 
-          <div className="w-[1px] h-5 bg-gray-200 mx-1" />
+          <div className="w-[1px] h-4 bg-white/10 mx-1" />
 
           {/* Undo / Redo */}
           <button
             type="button"
             disabled={!isEditable || !editor.can().undo()}
             onClick={() => editor.chain().focus().undo().run()}
-            className="p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+            className="p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent transition-all"
             title="Undo"
           >
             <Undo2 className="w-4 h-4" />
@@ -298,7 +317,7 @@ export function Editor({
             type="button"
             disabled={!isEditable || !editor.can().redo()}
             onClick={() => editor.chain().focus().redo().run()}
-            className="p-1.5 rounded text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+            className="p-1.5 rounded-md text-gray-300 hover:bg-white/10 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent transition-all"
             title="Redo"
           >
             <Redo2 className="w-4 h-4" />
@@ -306,8 +325,8 @@ export function Editor({
         </div>
 
         {/* Right side toolbar: Export & stats */}
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          <div className="hidden md:flex items-center gap-2 border-r border-gray-200 pr-3 mr-1 text-[11px]">
+        <div className="flex items-center gap-2 text-xs text-gray-400">
+          <div className="hidden md:flex items-center gap-2 border-r border-white/10 pr-3 mr-1 text-[11px] text-gray-400">
             <span>{wordCount} words</span>
             <span>&bull;</span>
             <span>{charCount} chars</span>
@@ -316,23 +335,23 @@ export function Editor({
           {/* Export Dropdown / Buttons */}
           <button
             onClick={handleExportMarkdown}
-            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-md border border-gray-200 transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-md border border-white/10 transition-colors"
             title="Export to Markdown (.md)"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-indigo-400" />
             <span>.md</span>
           </button>
           <button
             onClick={handleExportHtml}
-            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-md border border-gray-200 transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-md border border-white/10 transition-colors"
             title="Export as HTML (.html)"
           >
-            <FileDown className="w-3.5 h-3.5" />
+            <FileDown className="w-3.5 h-3.5 text-indigo-400" />
             <span>HTML</span>
           </button>
           <button
             onClick={handlePrint}
-            className="p-1 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
+            className="p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-md transition-colors"
             title="Print or Save as PDF"
           >
             <Printer className="w-3.5 h-3.5" />
@@ -340,9 +359,9 @@ export function Editor({
         </div>
       </div>
 
-      {/* Document View Canvas */}
+      {/* Dark Centered Document Canvas (Google Docs Sheet in dark palette) */}
       <div className="flex-1 overflow-y-auto px-4 py-8 flex justify-center">
-        <div className="w-full max-w-4xl bg-white min-h-[850px] shadow-sm rounded-sm border border-gray-200/80 px-12 py-14 sm:px-16 sm:py-16 transition-shadow focus-within:shadow-md">
+        <div className="w-full max-w-4xl bg-[#181a20] min-h-[850px] shadow-2xl rounded-lg border border-white/10 px-12 py-14 sm:px-16 sm:py-16 transition-all focus-within:border-indigo-500/40">
           <EditorContent editor={editor} />
         </div>
       </div>

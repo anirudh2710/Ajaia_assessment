@@ -89,19 +89,19 @@ export function FileImportModal({ isOpen, onClose, onImportSuccess }: FileImport
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="relative w-full max-w-lg bg-[#181a20] rounded-2xl shadow-2xl border border-white/10 overflow-hidden text-gray-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
           <div>
-            <h3 className="text-base font-semibold text-gray-900">Import Document</h3>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <h3 className="text-base font-semibold text-white">Import Document</h3>
+            <p className="text-xs text-gray-400 mt-0.5">
               Turn an existing file into a live editable collaborative document
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -117,10 +117,10 @@ export function FileImportModal({ isOpen, onClose, onImportSuccess }: FileImport
             onClick={() => fileInputRef.current?.click()}
             className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
               dragActive
-                ? "border-indigo-500 bg-indigo-50/50"
+                ? "border-indigo-500 bg-indigo-500/10"
                 : file
-                ? "border-green-400 bg-green-50/30"
-                : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/50"
+                ? "border-emerald-500/50 bg-emerald-500/5"
+                : "border-white/15 hover:border-indigo-400/50 hover:bg-white/[0.02]"
             }`}
           >
             <input
@@ -133,8 +133,8 @@ export function FileImportModal({ isOpen, onClose, onImportSuccess }: FileImport
 
             {file ? (
               <div className="flex flex-col items-center">
-                <CheckCircle2 className="w-10 h-10 text-green-500 mb-2 animate-in zoom-in-75 duration-150" />
-                <p className="text-sm font-medium text-gray-800">{file.name}</p>
+                <CheckCircle2 className="w-10 h-10 text-emerald-400 mb-2 animate-in zoom-in-75 duration-150" />
+                <p className="text-sm font-medium text-gray-100">{file.name}</p>
                 <p className="text-xs text-gray-400 mt-1">
                   {(file.size / 1024).toFixed(1)} KB &bull; Click or drop another to replace
                 </p>
@@ -142,17 +142,17 @@ export function FileImportModal({ isOpen, onClose, onImportSuccess }: FileImport
             ) : (
               <div className="flex flex-col items-center">
                 <UploadCloud className="w-10 h-10 text-gray-400 mb-2" />
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-gray-300">
                   Click to select or drag and drop a file
                 </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700">
+                <div className="flex items-center gap-2 mt-3">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-white/5 border border-white/10 text-gray-300">
                     .md (Markdown)
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-white/5 border border-white/10 text-gray-300">
                     .docx (Word)
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-white/5 border border-white/10 text-gray-300">
                     .txt (Plain Text)
                   </span>
                 </div>
@@ -161,25 +161,25 @@ export function FileImportModal({ isOpen, onClose, onImportSuccess }: FileImport
           </div>
 
           {error && (
-            <div className="mt-3 flex items-center gap-2 p-3 bg-red-50 text-red-700 text-xs rounded-lg border border-red-100">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <div className="mt-3 flex items-center gap-2 p-3 bg-red-500/10 text-red-300 text-xs rounded-lg border border-red-500/20">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-400" />
               <span>{error}</span>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
+        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-white/[0.02] border-t border-white/10">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-200/60 rounded-lg transition-colors"
+            className="px-4 py-2 text-xs font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
           >
             Cancel
           </button>
           <button
             disabled={!file || isUploading}
             onClick={handleUpload}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg shadow-xs transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg shadow-sm transition-all"
           >
             {isUploading ? (
               <>
