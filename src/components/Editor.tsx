@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
+import { useUser } from "@/context/UserContext";
+import { getUserColor, RemoteCursor, RemotePresence } from "@/lib/collaboration";
+import { LiveCursors } from "./LiveCursors";
 import {
   Bold,
   Italic,
@@ -24,18 +27,50 @@ import {
 } from "lucide-react";
 
 interface EditorProps {
+  documentId: string;
   initialContent: string;
   documentTitle: string;
   isEditable: boolean;
   onContentChange: (content: string) => void;
+  onPresenceUpdate?: (activePresences: RemotePresence[]) => void;
 }
 
 export function Editor({
+  documentId,
   initialContent,
   documentTitle,
   isEditable,
   onContentChange,
+  onPresenceUpdate,
 }: EditorProps) {
+  const { currentUser } = useUser();
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [remoteCursors, setRemoteCursors] = useState<Record<string, RemoteCursor>>({});
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
+  const isRemoteUpdatingRef = useRef(false);
+
+  const getCursorFromEditor = (ed: any): RemoteCursor | null => {
+    if (!canvasRef.current || !currentUser) return null;
+    try {
+      const { from } = ed.state.selection;
+      const coords = ed.view.coordsAtPos(from);
+      const canvasRect = canvasRef.current.getBoundingClientRect();
+      if (coords && canvasRect) {
+        return {
+          userId: currentUser.id,
+          userName: currentUser.name,
+          color: getUserColor(currentUser.id),
+          x: coords.left - canvasRect.left,
+          y: coords.top - canvasRect.top,
+          pos: from,
+          height: coords.bottom - coords.top,
+          lastActive: Date.now(),
+        };
+      }
+    } catch (e) {}
+    return null;
+  };
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -53,7 +88,31 @@ export function Editor({
     content: initialContent,
     editable: isEditable,
     onUpdate: ({ editor }) => {
-      onContentChange(editor.getHTML());
+      if (isRemoteUpdatingRef.current) return;
+      const html = editor.getHTML();
+      onContentChange(html);
+
+      // Broadcast content change and cursor position to other tabs
+      if (broadcastChannelRef.current && currentUser) {
+        const cursor = getCursorFromEditor(editor);
+        broadcastChannelRef.current.postMessage({
+          type: "content_update",
+          content: html,
+          senderId: currentUser.id,
+          senderName: currentUser.name,
+          cursor,
+        });
+      }
+    },
+    onSelectionUpdate: ({ editor }) => {
+      if (!broadcastChannelRef.current || !currentUser) return;
+      const cursor = getCursorFromEditor(editor);
+      if (cursor) {
+        broadcastChannelRef.current.postMessage({
+          type: "cursor_move",
+          cursor,
+        });
+      }
     },
     editorProps: {
       attributes: {
@@ -64,7 +123,174 @@ export function Editor({
     immediatelyRender: false,
   });
 
-  // Update editable mode if permission changes (e.g. user switch)
+  // Setup BroadcastChannel for Real-time Cross-tab Collaboration
+  useEffect(() => {
+    if (typeof window === "undefined" || !documentId) return;
+
+    const channelName = `ajaia_doc_collab_${documentId}`;
+    const channel = new BroadcastChannel(channelName);
+    broadcastChannelRef.current = channel;
+
+    // Send heartbeat / presence join
+    const sendPresence = () => {
+      if (currentUser) {
+        channel.postMessage({
+          type: "presence_heartbeat",
+          presence: {
+            userId: currentUser.id,
+            userName: currentUser.name,
+            avatarUrl: currentUser.avatarUrl,
+            role: currentUser.roleTitle || "Team Member",
+            color: getUserColor(currentUser.id),
+            lastSeen: Date.now(),
+          },
+        });
+      }
+    };
+
+    sendPresence();
+    const presenceInterval = setInterval(sendPresence, 3000);
+
+    const presencesMap: Record<string, RemotePresence> = {};
+
+    channel.onmessage = (event) => {
+      const data = event.data;
+      if (!data || !data.type) return;
+
+      // 1. Live Remote Cursor updates
+      if (data.type === "cursor_move" && data.cursor) {
+        const incomingCursor = data.cursor as RemoteCursor;
+        if (currentUser && incomingCursor.userId === currentUser.id) return;
+
+        let localX = incomingCursor.x;
+        let localY = incomingCursor.y;
+        let localHeight = incomingCursor.height;
+
+        if (editor && canvasRef.current && typeof incomingCursor.pos === "number") {
+          try {
+            const docSize = editor.state.doc.content.size;
+            const safePos = Math.min(incomingCursor.pos, docSize);
+            const coords = editor.view.coordsAtPos(safePos);
+            const canvasRect = canvasRef.current.getBoundingClientRect();
+            if (coords && canvasRect) {
+              localX = coords.left - canvasRect.left;
+              localY = coords.top - canvasRect.top;
+              localHeight = coords.bottom - coords.top;
+            }
+          } catch (e) {
+            // Use broadcast relative coords
+          }
+        }
+
+        setRemoteCursors((prev) => ({
+          ...prev,
+          [incomingCursor.userId]: {
+            ...incomingCursor,
+            x: localX,
+            y: localY,
+            height: localHeight,
+            lastActive: Date.now(),
+          },
+        }));
+      }
+
+      // 2. Live Content Updates from another tab
+      if (data.type === "content_update" && data.content) {
+        if (currentUser && data.senderId === currentUser.id) return;
+
+        if (editor && editor.getHTML() !== data.content) {
+          isRemoteUpdatingRef.current = true;
+          const { from, to } = editor.state.selection;
+          editor.commands.setContent(data.content, { emitUpdate: false });
+          // Restore recipient's own cursor position
+          try {
+            const maxPos = editor.state.doc.content.size;
+            editor.commands.setTextSelection({
+              from: Math.min(from, maxPos),
+              to: Math.min(to, maxPos),
+            });
+          } catch (e) {}
+          isRemoteUpdatingRef.current = false;
+
+          // Also update sender's cursor immediately
+          if (data.cursor) {
+            const incomingCursor = data.cursor as RemoteCursor;
+            requestAnimationFrame(() => {
+              let localX = incomingCursor.x;
+              let localY = incomingCursor.y;
+              let localHeight = incomingCursor.height;
+
+              if (editor && canvasRef.current && typeof incomingCursor.pos === "number") {
+                try {
+                  const docSize = editor.state.doc.content.size;
+                  const safePos = Math.min(incomingCursor.pos, docSize);
+                  const coords = editor.view.coordsAtPos(safePos);
+                  const canvasRect = canvasRef.current.getBoundingClientRect();
+                  if (coords && canvasRect) {
+                    localX = coords.left - canvasRect.left;
+                    localY = coords.top - canvasRect.top;
+                    localHeight = coords.bottom - coords.top;
+                  }
+                } catch (e) {}
+              }
+
+              setRemoteCursors((prev) => ({
+                ...prev,
+                [incomingCursor.userId]: {
+                  ...incomingCursor,
+                  x: localX,
+                  y: localY,
+                  height: localHeight,
+                  lastActive: Date.now(),
+                },
+              }));
+            });
+          }
+        }
+      }
+
+      // 3. Live Presence Heartbeats
+      if (data.type === "presence_heartbeat" && data.presence) {
+        const pres = data.presence as RemotePresence;
+        presencesMap[pres.userId] = pres;
+
+        if (onPresenceUpdate) {
+          const now = Date.now();
+          const active = Object.values(presencesMap).filter((p) => now - p.lastSeen < 8000);
+          onPresenceUpdate(active);
+        }
+      }
+    };
+
+    return () => {
+      clearInterval(presenceInterval);
+      channel.close();
+      broadcastChannelRef.current = null;
+    };
+  }, [documentId, currentUser, editor, onPresenceUpdate]);
+
+  // Clean inactive cursors periodically
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = Date.now();
+      setRemoteCursors((prev) => {
+        let changed = false;
+        const next: Record<string, RemoteCursor> = {};
+        for (const [id, cursor] of Object.entries(prev)) {
+          if (now - cursor.lastActive < 8000) {
+            next[id] = cursor;
+          } else {
+            changed = true;
+          }
+        }
+        return changed ? next : prev;
+      });
+    }, 2000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Update editable mode if permission changes
   useEffect(() => {
     if (editor) {
       editor.setEditable(isEditable);
@@ -73,7 +299,7 @@ export function Editor({
 
   // Update content if initialContent changes externally
   useEffect(() => {
-    if (editor && initialContent !== editor.getHTML() && !editor.isFocused) {
+    if (editor && initialContent !== editor.getHTML() && !editor.isFocused && !isRemoteUpdatingRef.current) {
       editor.commands.setContent(initialContent, { emitUpdate: false });
     }
   }, [editor, initialContent]);
@@ -361,7 +587,16 @@ export function Editor({
 
       {/* Dark Centered Document Canvas (Google Docs Sheet in dark palette) */}
       <div className="flex-1 overflow-y-auto px-4 py-8 flex justify-center">
-        <div className="w-full max-w-4xl bg-[#181a20] min-h-[850px] shadow-2xl rounded-lg border border-white/10 px-12 py-14 sm:px-16 sm:py-16 transition-all focus-within:border-indigo-500/40">
+        <div
+          ref={canvasRef}
+          className="relative w-full max-w-4xl bg-[#181a20] min-h-[850px] shadow-2xl rounded-lg border border-white/10 px-12 py-14 sm:px-16 sm:py-16 transition-all focus-within:border-indigo-500/40"
+        >
+          {/* Live Cross-Tab Cursors Overlay */}
+          <LiveCursors
+            cursors={remoteCursors}
+            currentUserId={currentUser?.id || ""}
+          />
+
           <EditorContent editor={editor} />
         </div>
       </div>

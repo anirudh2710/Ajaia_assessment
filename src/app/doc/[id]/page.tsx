@@ -8,6 +8,7 @@ import { Editor } from "@/components/Editor";
 import { ShareModal } from "@/components/ShareModal";
 import { AttachmentDrawer, AttachmentItem } from "@/components/AttachmentDrawer";
 import { UserSwitcher } from "@/components/UserSwitcher";
+import { RemotePresence } from "@/lib/collaboration";
 import {
   ArrowLeft,
   CloudCheck,
@@ -17,6 +18,7 @@ import {
   Eye,
   AlertCircle,
   FileText,
+  Users,
 } from "lucide-react";
 
 interface Collaborator {
@@ -52,6 +54,7 @@ function DocumentEditorContent() {
 
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isAttachmentDrawerOpen, setIsAttachmentDrawerOpen] = useState(false);
+  const [livePresences, setLivePresences] = useState<RemotePresence[]>([]);
 
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -187,6 +190,11 @@ function DocumentEditorContent() {
   const isEditable = document.currentUserRole === "owner" || document.currentUserRole === "editor";
   const isOwner = document.currentUserRole === "owner";
 
+  // Filter other active collaborators viewing this document
+  const otherActiveCollaborators = livePresences.filter(
+    (p) => currentUser && p.userId !== currentUser.id
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-[#0f1115] text-[#f3f4f6]">
       {/* Top Navigation Bar in Dark Google Docs Style */}
@@ -233,8 +241,34 @@ function DocumentEditorContent() {
           </div>
         </div>
 
-        {/* Right: Actions & User Switcher */}
+        {/* Right: Actions, Live Presences & User Switcher */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Active Collaborators Presence Avatars (with pulsing live dots) */}
+          {otherActiveCollaborators.length > 0 && (
+            <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1" />
+              <div className="flex items-center -space-x-1.5">
+                {otherActiveCollaborators.map((c) => (
+                  <div
+                    key={c.userId}
+                    className="relative group cursor-pointer"
+                    title={`${c.userName} is active in another tab`}
+                  >
+                    <img
+                      src={c.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${c.userName}`}
+                      alt={c.userName}
+                      className="w-5 h-5 rounded-full border-2"
+                      style={{ borderColor: c.color }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <span className="text-[10px] text-gray-300 ml-1 hidden sm:inline">
+                {otherActiveCollaborators.length} active
+              </span>
+            </div>
+          )}
+
           {/* Attachments Button */}
           <button
             onClick={() => setIsAttachmentDrawerOpen(true)}
@@ -284,12 +318,14 @@ function DocumentEditorContent() {
         </div>
       )}
 
-      {/* Editor Surface */}
+      {/* Editor Surface with Live Cursors and Cross-Tab Real-time Sync */}
       <Editor
+        documentId={document.id}
         initialContent={document.content}
         documentTitle={document.title}
         isEditable={isEditable}
         onContentChange={handleContentChange}
+        onPresenceUpdate={(presences) => setLivePresences(presences)}
       />
 
       {/* Share Modal */}

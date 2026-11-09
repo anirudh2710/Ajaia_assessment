@@ -32,13 +32,43 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           const data: User[] = await res.json();
           setUsers(data);
 
-          // Restore saved user or default to Alex
-          const savedId = localStorage.getItem("ajaia_user_id");
-          const found = data.find((u) => u.id === savedId) || data[0];
+          // 1. Check URL query param (?user=sarah or ?userId=user_sarah)
+          let queryParam: string | null = null;
+          if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            queryParam = params.get("user") || params.get("userId");
+          }
+
+          // 2. Check tab-scoped sessionStorage, then localStorage
+          const sessionUserId = typeof window !== "undefined" ? sessionStorage.getItem("ajaia_user_id") : null;
+          const localUserId = typeof window !== "undefined" ? localStorage.getItem("ajaia_user_id") : null;
+
+          let found: User | undefined;
+          if (queryParam) {
+            found = data.find(
+              (u) =>
+                u.id === queryParam ||
+                u.name.toLowerCase().includes(queryParam.toLowerCase()) ||
+                u.email.toLowerCase().includes(queryParam.toLowerCase())
+            );
+          }
+          if (!found && sessionUserId) {
+            found = data.find((u) => u.id === sessionUserId);
+          }
+          if (!found && localUserId) {
+            found = data.find((u) => u.id === localUserId);
+          }
+          if (!found) {
+            found = data[0];
+          }
+
           if (found) {
             setCurrentUser(found);
-            localStorage.setItem("ajaia_user_id", found.id);
-            document.cookie = `ajaia_user_id=${found.id}; path=/`;
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("ajaia_user_id", found.id);
+              localStorage.setItem("ajaia_user_id", found.id);
+              document.cookie = `ajaia_user_id=${found.id}; path=/`;
+            }
           }
         }
       } catch (err) {
@@ -53,8 +83,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const handleSetCurrentUser = (user: User) => {
     setCurrentUser(user);
-    localStorage.setItem("ajaia_user_id", user.id);
-    document.cookie = `ajaia_user_id=${user.id}; path=/`;
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("ajaia_user_id", user.id);
+      localStorage.setItem("ajaia_user_id", user.id);
+      document.cookie = `ajaia_user_id=${user.id}; path=/`;
+    }
   };
 
   return (
