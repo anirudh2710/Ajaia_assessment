@@ -34,10 +34,10 @@ No manual signup or passwords required. Use the **Simulated User Switcher** in t
 
 | Persona | Name | Role | Seeded Scenario |
 | :--- | :--- | :--- | :--- |
-| **User 1 (Default)** | Alex Johnson | Engineering Lead (`alex@ajaia.internal`) | Owns the *Q3 Engineering Roadmap*. Collaborates on *Product Specs*. |
-| **User 2** | Sarah Chen | Product Manager (`sarah@ajaia.internal`) | Owns the *Product Requirements Doc*. Editor on *Engineering Roadmap*. |
-| **User 3** | Marcus Vance | Product Designer (`marcus@ajaia.internal`) | Owns *Design Guidelines*. Viewer (read-only) on *Engineering Roadmap*. |
-| **User 4** | Maya Patel | Security Lead (`maya@ajaia.internal`) | Uninvited user (demonstrates restricted/zero-access state). |
+| **User 1 (Default)** | Alex Johnson | Engineering Lead (`alex@ajaia.internal`) | Default active user (starts with a clean document slate). |
+| **User 2** | Sarah Chen | Product Manager (`sarah@ajaia.internal`) | Team member available to receive shares or create docs. |
+| **User 3** | Marcus Vance | Product Designer (`marcus@ajaia.internal`) | Team member available to test Viewer vs Editor access. |
+| **User 4** | Maya Patel | Security Lead (`maya@ajaia.internal`) | Team member to test restricted/zero-access states. |
 
 ---
 

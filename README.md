@@ -6,7 +6,7 @@
 
 ## 🚀 Live Demo & Quick Test
 - **Local Dev**: Run in 1 command (`npm run dev`) with zero external database configuration.
-- **Test Accounts**: Instant one-click user switcher in the top navigation bar. No login friction.
+- **Test Accounts**: Instant one-click user switcher in the top navigation bar with 4 seeded personas (starts with 0 default documents for a clean slate). No login friction.
 
 ---
 
