@@ -23,6 +23,9 @@
 # misc
 .DS_Store
 *.pem
+*.mov
+*.mp4
+*.webm
 # database journals
 prisma/*.db-journal
 

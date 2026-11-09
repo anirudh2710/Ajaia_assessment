@@ -2,6 +2,8 @@
 
 **Applicant / Role**: AI-Native Full Stack Developer Assessment  
 **Project**: Ajaia Docs (Lightweight Collaborative Document Editor)  
+**Live Deployed Application**: [https://ajaia-assessment-virid.vercel.app](https://ajaia-assessment-virid.vercel.app/)  
+**Walkthrough Video**: [Google Drive Video Link](https://drive.google.com/file/d/1yGiekRwNAIO15rdk50JHaB-F5yYKifcC/view?usp=sharing)  
 **Status**: Complete, Verified & Tested
 
 ---
@@ -21,7 +23,7 @@
    - `README.md`: Quick start guide, architecture summary, and command reference.
    - `ARCHITECTURE.md`: Prioritization tradeoffs, deprioritized features, data schema, and security matrix.
    - `AI_WORKFLOW.md`: AI tool breakdown, velocity impact, rejected AI suggestions, and validation protocol.
-   - `WALKTHROUGH_VIDEO.txt`: Loom / video walkthrough guide with script and timestamps.
+   - `WALKTHROUGH_VIDEO.txt`: Video walkthrough link and demo feature overview.
 4. **Sample Test Files**:
    - `sample-files/sample-engineering-principles.md` (Markdown import demo)
    - `sample-files/sample-meeting-notes.txt` (Plain text import demo)

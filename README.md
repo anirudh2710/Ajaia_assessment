@@ -2,9 +2,14 @@
 
 > An AI-native full stack collaborative document editor inspired by Google Docs, engineered for Ajaia's productivity assessment within a strict timebox.
 
+**🌐 Live Deployed Application**: [https://ajaia-assessment-virid.vercel.app](https://ajaia-assessment-virid.vercel.app/)  
+**🎬 Walkthrough Video**: [Google Drive Video Link](https://drive.google.com/drive/home?dmr=1&ec=wgc-drive-%5Bmodule%5D-goto)
+
 ---
 
 ## 🚀 Live Demo & Quick Test
+- **Deployed App**: **[https://ajaia-assessment-virid.vercel.app](https://ajaia-assessment-virid.vercel.app/)** — Explore and test all features instantly in your browser (no local setup required).
+- **Walkthrough Video**: **[Google Drive Demo](https://drive.google.com/drive/home?dmr=1&ec=wgc-drive-%5Bmodule%5D-goto)**
 - **Local Dev**: Run in 1 command (`npm run dev`) with zero external database configuration.
 - **Test Accounts**: Instant one-click user switcher in the top navigation bar with 4 seeded personas (starts with 0 default documents for a clean slate). No login friction.
 

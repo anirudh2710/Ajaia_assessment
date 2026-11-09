@@ -1,50 +1,6 @@
-# Walkthrough Video Link & Demo Script
+# Walkthrough Video Link & Demo Overview
 
 ## 🔗 Walkthrough Video URL
-Link: [Insert unlisted Loom or YouTube video link here]
-(e.g., https://www.loom.com/share/your-video-id)
+Link: https://drive.google.com/file/d/1yGiekRwNAIO15rdk50JHaB-F5yYKifcC/view?usp=sharing
 
 ---
-
-## ⏱️ Recommended 3–4 Minute Demo Script & Timestamps
-
-### 0:00 – 0:45 | Introduction & Product Overview
-- Introduce yourself and the goal: Building an AI-native lightweight collaborative document editor inspired by Google Docs for Ajaia.
-- Point out the clean UI: Top navbar with live user switcher, quick actions ("+ Blank Document", "⬆ Import File"), and tabbed views ("My Documents" vs "Shared with Me").
-- Show the 4 seeded personas (Alex, Sarah, Marcus, Maya).
-
-### 0:45 – 1:30 | Document Creation, Rich Text Editing & Auto-Save
-- Click "+ Blank Document" to open the editor.
-- Rename the title in the header ("Architecture RFC").
-- Demonstrate rich text formatting: H1, H2, Bold, Italic, Underline, Bulleted list, Numbered list, Blockquote, Code block.
-- Highlight the auto-save indicator: Notice it transitions seamlessly from "Saving..." to "Saved to cloud" as you type.
-- Refresh the page to demonstrate complete persistence.
-
-### 1:30 – 2:15 | File Upload & Import Workflow
-- Navigate back to the Dashboard.
-- Click "Import File" and drag & drop `sample-files/sample-engineering-principles.md` (or click to browse).
-- Click "Import to Editor": Notice how the file name becomes the title and markdown tokens (# headings, bold, bullet lists) are parsed into editable rich text.
-- Open the "Files / Attachments" drawer and upload a reference file attachment.
-
-### 2:15 – 3:00 | Sharing Model & Role-Based Permissions
-- Open the "Share" modal.
-- Show current owner (Alex) and existing collaborators.
-- Invite Marcus Vance with the "Viewer" role.
-- Switch personas to Marcus using the top-bar User Switcher.
-- Observe:
-  1. The document appears in Marcus's "Shared with Me" tab with a "Viewer" badge.
-  2. Opening the document displays a prominent "Viewing only" banner.
-  3. The toolbar is disabled and the editor canvas is locked to read-only.
-- Mention that attempting unauthorized API mutations returns strict HTTP 403 Forbidden.
-
-### 3:00 – 3:45 | Engineering Quality, Tradeoffs & Deprioritization
-- Explain key tradeoffs:
-  - Tiptap (ProseMirror) over raw `contentEditable` for rock-solid document state.
-  - Persona switcher over OAuth to maximize reviewer velocity.
-  - Deprioritized full Yjs CRDT real-time WebSockets to guarantee reliability of the core vertical slice.
-- Highlight the automated test suite: 8 tests passing in ~220ms (`npm test`).
-- Show the export feature: Export to Markdown (`.md`), HTML (`.html`), or Print/PDF.
-
-### 3:45 – 4:00 | AI Workflow & Conclusion
-- Briefly summarize AI usage: accelerated Prisma schema design, regex tokenization, and test matrices, while human engineering judgment rejected raw contentEditable, replaced heavy test runners with Node 22 native tests, and ensured strict security boundaries.
-- Wrap up and thank the Ajaia team.
